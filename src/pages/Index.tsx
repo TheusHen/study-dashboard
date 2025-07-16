@@ -49,7 +49,7 @@ const Index = () => {
           </h1>
         </div>
         <p className="text-xl text-muted-foreground">
-          Track your progress and maintain consistency in your studies
+          TheusHen's progress and maintain consistency in studies
         </p>
       </div>
 

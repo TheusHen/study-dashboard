@@ -28,8 +28,7 @@ const SubjectChart = () => {
   useEffect(() => {
     const fetchSubjects = async () => {
       setLoading(true);
-      // Busca todas as sessões de estudo e conta por subject
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("study_sessions")
         .select("subject");
 
@@ -62,7 +61,7 @@ const SubjectChart = () => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const percentage = totalDays ? ((data.days / totalDays) * 100).toFixed(1) : 0;
-      
+
       return (
         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
           <p className="text-card-foreground font-medium">{label}</p>
@@ -81,43 +80,44 @@ const SubjectChart = () => {
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-6 w-6 text-primary" />
-          <CardTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
+          <CardTitle className="text-xl md:text-2xl bg-gradient-primary bg-clip-text text-transparent">
             Subject Frequency
           </CardTitle>
         </div>
-        <p className="text-muted-foreground">
+        <p className="text-xs md:text-base text-muted-foreground">
           Total of {totalDays} study days distributed among subjects
         </p>
       </CardHeader>
       <CardContent>
-        <div className="h-80 w-full mb-6">
+        <div className="h-56 sm:h-72 md:h-80 w-full mb-4 md:mb-6">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={subjectData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+              margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis 
-                dataKey="subject" 
+              <XAxis
+                dataKey="subject"
                 angle={-45}
                 textAnchor="end"
                 height={80}
                 stroke="hsl(var(--foreground))"
-                fontSize={12}
+                fontSize={10}
+                interval={0}
               />
-              <YAxis 
+              <YAxis
                 stroke="hsl(var(--foreground))"
                 fontSize={12}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Bar 
-                dataKey="days" 
+              <Bar
+                dataKey="days"
                 radius={[4, 4, 0, 0]}
                 className="transition-all duration-300"
               >
                 {subjectData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
+                  <Cell
+                    key={`cell-${index}`}
                     fill={entry.color}
                     className="hover:opacity-80 cursor-pointer transition-opacity duration-300"
                   />
@@ -126,56 +126,56 @@ const SubjectChart = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-          <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-            <div className="flex items-center gap-2 mb-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-4 md:mt-6">
+          <div className="bg-primary/10 rounded-lg p-3 md:p-4 border border-primary/20">
+            <div className="flex items-center gap-2 mb-1">
               <BookOpen className="h-4 w-4 text-primary" />
-              <span className="text-sm text-muted-foreground">Total Days</span>
+              <span className="text-xs md:text-sm text-muted-foreground">Total Days</span>
             </div>
-            <span className="text-2xl font-bold text-primary">{totalDays}</span>
+            <span className="text-lg md:text-2xl font-bold text-primary">{totalDays}</span>
           </div>
-          <div className="bg-success/10 rounded-lg p-4 border border-success/20">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="bg-success/10 rounded-lg p-3 md:p-4 border border-success/20">
+            <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="h-4 w-4 text-success" />
-              <span className="text-sm text-muted-foreground">Most Studied</span>
+              <span className="text-xs md:text-sm text-muted-foreground">Most Studied</span>
             </div>
-            <span className="text-lg font-bold text-success">
+            <span className="text-base md:text-lg font-bold text-success">
               {subjectData.find(s => s.days === maxDays)?.subject}
             </span>
           </div>
-          <div className="bg-warning/10 rounded-lg p-4 border border-warning/20">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="bg-warning/10 rounded-lg p-3 md:p-4 border border-warning/20">
+            <div className="flex items-center gap-2 mb-1">
               <BookOpen className="h-4 w-4 text-warning" />
-              <span className="text-sm text-muted-foreground">Subjects</span>
+              <span className="text-xs md:text-sm text-muted-foreground">Subjects</span>
             </div>
-            <span className="text-2xl font-bold text-warning">{subjectData.length}</span>
+            <span className="text-lg md:text-2xl font-bold text-warning">{subjectData.length}</span>
           </div>
-          <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="bg-accent/10 rounded-lg p-3 md:p-4 border border-accent/20">
+            <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="h-4 w-4 text-accent" />
-              <span className="text-sm text-muted-foreground">Avg/Subject</span>
+              <span className="text-xs md:text-sm text-muted-foreground">Avg/Subject</span>
             </div>
-            <span className="text-2xl font-bold text-accent">
+            <span className="text-lg md:text-2xl font-bold text-accent">
               {subjectData.length ? (totalDays / subjectData.length).toFixed(1) : 0}
             </span>
           </div>
         </div>
-        <div className="mt-6 pt-4 border-t border-border">
-          <h4 className="text-lg font-medium mb-3 text-foreground">Subject Legend</h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="mt-4 md:mt-6 pt-4 border-t border-border">
+          <h4 className="text-base md:text-lg font-medium mb-2 md:mb-3 text-foreground">Subject Legend</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-2">
             {subjectData.map((item, index) => (
-              <div key={index} className="flex items-center gap-2 p-2 rounded hover:bg-secondary/20 transition-colors">
-                <div 
-                  className="w-3 h-3 rounded-full flex-shrink-0" 
+              <div key={index} className="flex items-center gap-2 p-1 md:p-2 rounded hover:bg-secondary/20 transition-colors">
+                <div
+                  className="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="text-sm text-foreground truncate">{item.subject}</span>
-                <span className="text-xs text-muted-foreground ml-auto">{item.days}d</span>
+                <span className="text-xs md:text-sm text-foreground truncate">{item.subject}</span>
+                <span className="text-[10px] md:text-xs text-muted-foreground ml-auto">{item.days}d</span>
               </div>
             ))}
           </div>
         </div>
-        {loading && <div className="text-center mt-4 text-muted-foreground">Loading...</div>}
+        {loading && <div className="text-center mt-4 text-muted-foreground text-sm">Loading...</div>}
       </CardContent>
     </Card>
   );

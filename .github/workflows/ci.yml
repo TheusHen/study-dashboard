@@ -28,6 +28,7 @@ jobs:
           echo "DISCORD_GUILD_ID=${{ secrets.DISCORD_GUILD_ID }}" >> .env
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
+          echo "ANNOUNCE_CHANNEL_ID=${{ secrets.ANNOUNCE_CHANNEL_ID }}" >> .env
 
       - name: Run
         run: node scripts/studyFormBot.js
