@@ -17,7 +17,6 @@ const Index = () => {
         >
           <a
             href="https://www.theushen.me"
-            target="_blank"
             rel="noopener noreferrer"
           >
             <ArrowLeft className="h-4 w-4" />
