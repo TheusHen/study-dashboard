@@ -157,3 +157,12 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+# Created by:
+## Frontend:
+<img width="1200" height="629" alt="image" src="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+## Backend + Idea + Review and tests:
+<img width="1200" height="629" alt="image" src="https://www.theushen.me/banner.jpg" />
