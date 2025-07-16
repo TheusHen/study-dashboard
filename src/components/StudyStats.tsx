@@ -8,6 +8,30 @@ interface StreakRow {
   best_streak: number;
 }
 
+const getCurrentStreak = (dates: Date[], today: Date): number => {
+  if (dates.length === 0) return 0;
+  // Ordenar datas em ordem decrescente
+  const sorted = [...dates].sort((a, b) => b.getTime() - a.getTime());
+  let streak = 0;
+  let current = new Date(today);
+  current.setHours(0, 0, 0, 0);
+  let i = 0;
+  while (i < sorted.length) {
+    if (sorted[i].toDateString() === current.toDateString()) {
+      streak++;
+      current.setDate(current.getDate() - 1);
+      i++;
+    } else if (sorted[i].getTime() < current.getTime()) {
+      // Quebrou o streak
+      break;
+    } else {
+      // Data futura ou repetida, avança
+      i++;
+    }
+  }
+  return streak;
+};
+
 const StudyStats = () => {
   const [stats, setStats] = useState({
     totalDays: 0,
@@ -78,16 +102,8 @@ const StudyStats = () => {
         }
         bestStreakCalc = Math.max(bestStreakCalc, streak);
 
-        streak = 0;
-        for (let i = sortedDates.length - 1; i >= 0; i--) {
-          const diff = (yesterday.getTime() - sortedDates[i].getTime()) / (1000 * 60 * 60 * 24);
-          if (diff === 0 - streak) {
-            streak++;
-          } else {
-            break;
-          }
-        }
-        const currentStreak = streak;
+        // Current Streak (corrigido)
+        const currentStreak = getCurrentStreak(sessionDates, today);
 
         setStats({
           totalDays,
@@ -99,12 +115,18 @@ const StudyStats = () => {
           completionRate: totalDays ? (studiedDays / totalDays) * 100 : 0,
         });
 
+        // Atualiza best streak se necessário
         if (bestStreakCalc > bestStreak) {
           await supabase
             .from("study_streaks")
             .upsert({ id: 1, best_streak: bestStreakCalc }, { onConflict: 'id' });
           setBestStreak(bestStreakCalc);
         }
+
+        // Salva current streak
+        await supabase
+          .from("study_current_streak")
+          .upsert({ id: 1, current_streak: currentStreak }, { onConflict: "id" });
       }
     };
 
