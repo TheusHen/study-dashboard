@@ -9,16 +9,16 @@ interface SubjectData {
 }
 
 const SubjectChart = () => {
-  // Dados de exemplo das matérias estudadas
+  // Sample data for studied subjects
   const subjectData: SubjectData[] = [
-    { subject: 'Matemática', days: 8, color: '#22c55e' },
-    { subject: 'Física', days: 6, color: '#3b82f6' },
-    { subject: 'Química', days: 5, color: '#8b5cf6' },
-    { subject: 'História', days: 4, color: '#f59e0b' },
-    { subject: 'Geografia', days: 3, color: '#ef4444' },
-    { subject: 'Inglês', days: 5, color: '#06b6d4' },
-    { subject: 'Português', days: 4, color: '#ec4899' },
-    { subject: 'Biologia', days: 2, color: '#10b981' },
+    { subject: 'Mathematics', days: 8, color: '#22c55e' },
+    { subject: 'Physics', days: 6, color: '#3b82f6' },
+    { subject: 'Chemistry', days: 5, color: '#8b5cf6' },
+    { subject: 'History', days: 4, color: '#f59e0b' },
+    { subject: 'Geography', days: 3, color: '#ef4444' },
+    { subject: 'English', days: 5, color: '#06b6d4' },
+    { subject: 'Literature', days: 4, color: '#ec4899' },
+    { subject: 'Biology', days: 2, color: '#10b981' },
   ];
 
   const totalDays = subjectData.reduce((sum, item) => sum + item.days, 0);
@@ -33,7 +33,7 @@ const SubjectChart = () => {
         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
           <p className="text-card-foreground font-medium">{label}</p>
           <p className="text-primary">
-            <span className="font-medium">{data.days} dias</span>
+            <span className="font-medium">{data.days} days</span>
             <span className="text-muted-foreground ml-2">({percentage}%)</span>
           </p>
         </div>
@@ -48,11 +48,11 @@ const SubjectChart = () => {
         <div className="flex items-center gap-2">
           <TrendingUp className="h-6 w-6 text-primary" />
           <CardTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
-            Frequência por Matéria
+            Subject Frequency
           </CardTitle>
         </div>
         <p className="text-muted-foreground">
-          Total de {totalDays} dias de estudo distribuídos entre as matérias
+          Total of {totalDays} study days distributed among subjects
         </p>
       </CardHeader>
       
@@ -94,12 +94,12 @@ const SubjectChart = () => {
           </ResponsiveContainer>
         </div>
         
-        {/* Cards de estatísticas */}
+        {/* Statistics cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
             <div className="flex items-center gap-2 mb-2">
               <BookOpen className="h-4 w-4 text-primary" />
-              <span className="text-sm text-muted-foreground">Total de Dias</span>
+              <span className="text-sm text-muted-foreground">Total Days</span>
             </div>
             <span className="text-2xl font-bold text-primary">{totalDays}</span>
           </div>
@@ -107,7 +107,7 @@ const SubjectChart = () => {
           <div className="bg-success/10 rounded-lg p-4 border border-success/20">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="h-4 w-4 text-success" />
-              <span className="text-sm text-muted-foreground">Mais Estudada</span>
+              <span className="text-sm text-muted-foreground">Most Studied</span>
             </div>
             <span className="text-lg font-bold text-success">
               {subjectData.find(s => s.days === maxDays)?.subject}
@@ -117,7 +117,7 @@ const SubjectChart = () => {
           <div className="bg-warning/10 rounded-lg p-4 border border-warning/20">
             <div className="flex items-center gap-2 mb-2">
               <BookOpen className="h-4 w-4 text-warning" />
-              <span className="text-sm text-muted-foreground">Matérias</span>
+              <span className="text-sm text-muted-foreground">Subjects</span>
             </div>
             <span className="text-2xl font-bold text-warning">{subjectData.length}</span>
           </div>
@@ -125,7 +125,7 @@ const SubjectChart = () => {
           <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="h-4 w-4 text-accent" />
-              <span className="text-sm text-muted-foreground">Média/Matéria</span>
+              <span className="text-sm text-muted-foreground">Avg/Subject</span>
             </div>
             <span className="text-2xl font-bold text-accent">
               {(totalDays / subjectData.length).toFixed(1)}
@@ -133,9 +133,9 @@ const SubjectChart = () => {
           </div>
         </div>
         
-        {/* Lista de matérias com cores */}
+        {/* Subject list with colors */}
         <div className="mt-6 pt-4 border-t border-border">
-          <h4 className="text-lg font-medium mb-3 text-foreground">Legenda das Matérias</h4>
+          <h4 className="text-lg font-medium mb-3 text-foreground">Subject Legend</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {subjectData.map((item, index) => (
               <div key={index} className="flex items-center gap-2 p-2 rounded hover:bg-secondary/20 transition-colors">

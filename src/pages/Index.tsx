@@ -1,48 +1,61 @@
 import StudyCalendar from "@/components/StudyCalendar";
 import SubjectChart from "@/components/SubjectChart";
 import StudyStats from "@/components/StudyStats";
-import { GraduationCap, Sparkles } from "lucide-react";
+import { GraduationCap, Sparkles, ArrowLeft, Github } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
-      {/* Header com animação */}
+      {/* Navigation buttons */}
+      <div className="flex justify-between items-center mb-6">
+        <Button variant="outline" size="sm" className="flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <Button variant="outline" size="sm" className="flex items-center gap-2">
+          <Github className="h-4 w-4" />
+          GitHub
+        </Button>
+      </div>
+
+      {/* Header with animation */}
       <div className="text-center mb-8 animate-fade-in">
         <div className="flex items-center justify-center gap-3 mb-4">
           <GraduationCap className="h-8 w-8 text-primary animate-glow" />
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Dashboard de Estudos
+            Study Dashboard
           </h1>
           <Sparkles className="h-8 w-8 text-accent animate-glow" />
         </div>
         <p className="text-xl text-muted-foreground">
-          Acompanhe seu progresso e mantenha a consistência nos estudos
+          Track your progress and maintain consistency in your studies
         </p>
       </div>
 
-      {/* Estatísticas */}
+      {/* Statistics */}
       <div className="mb-8">
         <StudyStats />
       </div>
 
-      {/* Container principal com calendário e gráfico */}
+      {/* Main container with calendar and chart */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* Calendário de estudos */}
+        {/* Study calendar */}
         <div className="space-y-6">
           <StudyCalendar />
         </div>
 
-        {/* Gráfico de frequência */}
+        {/* Frequency chart */}
         <div className="space-y-6">
           <SubjectChart />
         </div>
       </div>
 
-      {/* Footer com efeito de brilho */}
+      {/* Footer with glow effect */}
       <div className="mt-12 text-center animate-fade-in">
         <div className="inline-block px-6 py-3 bg-gradient-card rounded-full border border-border shadow-glow">
           <p className="text-sm text-muted-foreground">
-            Continue estudando para manter sua sequência! 🔥
+            Keep studying to maintain your streak! 🔥
           </p>
         </div>
       </div>

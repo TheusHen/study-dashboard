@@ -12,31 +12,46 @@ interface StudyDay {
 const StudyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   
-  // Dados de exemplo - dias de estudo
+  // Sample study data - study days
   const studyData: StudyDay[] = [
-    { date: new Date(2024, 11, 1), studied: true, subjects: ['Matemática', 'Física'] },
+    { date: new Date(2024, 11, 1), studied: true, subjects: ['Mathematics', 'Physics'] },
     { date: new Date(2024, 11, 2), studied: false },
-    { date: new Date(2024, 11, 3), studied: true, subjects: ['Química'] },
-    { date: new Date(2024, 11, 4), studied: true, subjects: ['História', 'Geografia'] },
+    { date: new Date(2024, 11, 3), studied: true, subjects: ['Chemistry'] },
+    { date: new Date(2024, 11, 4), studied: true, subjects: ['History', 'Geography'] },
     { date: new Date(2024, 11, 5), studied: false },
-    { date: new Date(2024, 11, 6), studied: true, subjects: ['Inglês'] },
-    { date: new Date(2024, 11, 7), studied: true, subjects: ['Matemática', 'Português'] },
+    { date: new Date(2024, 11, 6), studied: true, subjects: ['English'] },
+    { date: new Date(2024, 11, 7), studied: true, subjects: ['Mathematics', 'Literature'] },
     { date: new Date(2024, 11, 8), studied: false },
-    { date: new Date(2024, 11, 9), studied: true, subjects: ['Física', 'Química'] },
-    { date: new Date(2024, 11, 10), studied: true, subjects: ['Biologia'] },
+    { date: new Date(2024, 11, 9), studied: true, subjects: ['Physics', 'Chemistry'] },
+    { date: new Date(2024, 11, 10), studied: true, subjects: ['Biology'] },
     { date: new Date(2024, 11, 11), studied: false },
-    { date: new Date(2024, 11, 12), studied: true, subjects: ['História'] },
-    { date: new Date(2024, 11, 13), studied: true, subjects: ['Matemática', 'Inglês'] },
+    { date: new Date(2024, 11, 12), studied: true, subjects: ['History'] },
+    { date: new Date(2024, 11, 13), studied: true, subjects: ['Mathematics', 'English'] },
     { date: new Date(2024, 11, 14), studied: false },
-    { date: new Date(2024, 11, 15), studied: true, subjects: ['Geografia', 'Português'] },
+    { date: new Date(2024, 11, 15), studied: true, subjects: ['Geography', 'Literature'] },
+    { date: new Date(2024, 11, 16), studied: true, subjects: ['Physics', 'Biology'] },
+    { date: new Date(2024, 11, 17), studied: false },
+    { date: new Date(2024, 11, 18), studied: true, subjects: ['Chemistry', 'Mathematics'] },
+    { date: new Date(2024, 11, 19), studied: true, subjects: ['English', 'History'] },
+    { date: new Date(2024, 11, 20), studied: false },
+    { date: new Date(2024, 11, 21), studied: true, subjects: ['Biology', 'Geography'] },
+    { date: new Date(2024, 11, 22), studied: true, subjects: ['Physics', 'Literature'] },
+    { date: new Date(2024, 11, 23), studied: false },
+    { date: new Date(2024, 11, 24), studied: true, subjects: ['Mathematics', 'Chemistry'] },
+    { date: new Date(2024, 11, 25), studied: true, subjects: ['History', 'English'] },
+    { date: new Date(2024, 11, 26), studied: false },
+    { date: new Date(2024, 11, 27), studied: true, subjects: ['Biology', 'Physics'] },
+    { date: new Date(2024, 11, 28), studied: true, subjects: ['Geography', 'Mathematics'] },
+    { date: new Date(2024, 11, 29), studied: false },
+    { date: new Date(2024, 11, 30), studied: true, subjects: ['Literature', 'Chemistry'] },
   ];
 
   const monthNames = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
   ];
 
-  const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -78,7 +93,7 @@ const StudyCalendar = () => {
           <div className="flex items-center gap-2">
             <Calendar className="h-6 w-6 text-primary" />
             <CardTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
-              Calendário de Estudos
+              Study Calendar
             </CardTitle>
           </div>
           <div className="flex items-center gap-2">
@@ -163,11 +178,11 @@ const StudyCalendar = () => {
         <div className="flex justify-center gap-6 mt-6 pt-4 border-t border-border">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-success animate-pulse-success" />
-            <span className="text-sm text-success-foreground">Estudou</span>
+            <span className="text-sm text-success-foreground">Studied</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-error animate-pulse-error" />
-            <span className="text-sm text-error-foreground">Não estudou</span>
+            <span className="text-sm text-error-foreground">Didn't study</span>
           </div>
         </div>
       </CardContent>
