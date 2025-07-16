@@ -161,7 +161,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 # Created by:
-## Frontend:
+## Frontend Initial Idea:
 <img width="1200" height="629" alt="image" src="https://lovable.dev/opengraph-image-p98pqg.png" />
 
 ## Backend + Idea + Review and tests:
