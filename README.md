@@ -55,10 +55,11 @@ study-dashboard/
 Create a `.env` file in the root directory with the following variables:
 
 ```
+# Set this at the vercel deployment environment variables
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_KEY=your_supabase_anon_key
 
-# For Discord bot (optional)
+# For Discord bot and Supabase at .env
 DISCORD_TOKEN=your_discord_bot_token
 DISCORD_CLIENT_ID=your_discord_client_id
 DISCORD_GUILD_ID=your_discord_server_id
