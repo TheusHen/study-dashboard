@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 interface StudyDay {
   date: Date;
@@ -11,40 +12,37 @@ interface StudyDay {
 
 const StudyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  
-  // Sample study data - study days
-  const studyData: StudyDay[] = [
-    { date: new Date(2024, 11, 1), studied: true, subjects: ['Mathematics', 'Physics'] },
-    { date: new Date(2024, 11, 2), studied: false },
-    { date: new Date(2024, 11, 3), studied: true, subjects: ['Chemistry'] },
-    { date: new Date(2024, 11, 4), studied: true, subjects: ['History', 'Geography'] },
-    { date: new Date(2024, 11, 5), studied: false },
-    { date: new Date(2024, 11, 6), studied: true, subjects: ['English'] },
-    { date: new Date(2024, 11, 7), studied: true, subjects: ['Mathematics', 'Literature'] },
-    { date: new Date(2024, 11, 8), studied: false },
-    { date: new Date(2024, 11, 9), studied: true, subjects: ['Physics', 'Chemistry'] },
-    { date: new Date(2024, 11, 10), studied: true, subjects: ['Biology'] },
-    { date: new Date(2024, 11, 11), studied: false },
-    { date: new Date(2024, 11, 12), studied: true, subjects: ['History'] },
-    { date: new Date(2024, 11, 13), studied: true, subjects: ['Mathematics', 'English'] },
-    { date: new Date(2024, 11, 14), studied: false },
-    { date: new Date(2024, 11, 15), studied: true, subjects: ['Geography', 'Literature'] },
-    { date: new Date(2024, 11, 16), studied: true, subjects: ['Physics', 'Biology'] },
-    { date: new Date(2024, 11, 17), studied: false },
-    { date: new Date(2024, 11, 18), studied: true, subjects: ['Chemistry', 'Mathematics'] },
-    { date: new Date(2024, 11, 19), studied: true, subjects: ['English', 'History'] },
-    { date: new Date(2024, 11, 20), studied: false },
-    { date: new Date(2024, 11, 21), studied: true, subjects: ['Biology', 'Geography'] },
-    { date: new Date(2024, 11, 22), studied: true, subjects: ['Physics', 'Literature'] },
-    { date: new Date(2024, 11, 23), studied: false },
-    { date: new Date(2024, 11, 24), studied: true, subjects: ['Mathematics', 'Chemistry'] },
-    { date: new Date(2024, 11, 25), studied: true, subjects: ['History', 'English'] },
-    { date: new Date(2024, 11, 26), studied: false },
-    { date: new Date(2024, 11, 27), studied: true, subjects: ['Biology', 'Physics'] },
-    { date: new Date(2024, 11, 28), studied: true, subjects: ['Geography', 'Mathematics'] },
-    { date: new Date(2024, 11, 29), studied: false },
-    { date: new Date(2024, 11, 30), studied: true, subjects: ['Literature', 'Chemistry'] },
-  ];
+  const [studyData, setStudyData] = useState<StudyDay[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStudyData = async () => {
+      setLoading(true);
+      // Busca todas as sessões da tabela study_sessions
+      const { data, error } = await supabase
+        .from("study_sessions")
+        .select("timestamp,subject");
+
+      if (data) {
+        // Agrupa por dia
+        const daysMap: Record<string, StudyDay> = {};
+        data.forEach((item: any) => {
+          const dateStr = new Date(item.timestamp).toDateString();
+          if (!daysMap[dateStr]) {
+            daysMap[dateStr] = { date: new Date(item.timestamp), studied: true, subjects: [] };
+          }
+          if (item.subject) {
+            daysMap[dateStr].subjects?.push(item.subject);
+          }
+        });
+
+        setStudyData(Object.values(daysMap));
+      }
+      setLoading(false);
+    };
+
+    fetchStudyData();
+  }, []);
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -119,7 +117,6 @@ const StudyCalendar = () => {
           </div>
         </div>
       </CardHeader>
-      
       <CardContent>
         <div className="grid grid-cols-7 gap-2 mb-4">
           {dayNames.map(day => (
@@ -128,10 +125,9 @@ const StudyCalendar = () => {
             </div>
           ))}
         </div>
-        
         <div className="grid grid-cols-7 gap-2">
           {days.map((day, index) => {
-            const studyData = getStudyDataForDate(day);
+            const studyDataDay = getStudyDataForDate(day);
             const isCurrentMonth = day.getMonth() === currentDate.getMonth();
             const isToday = day.toDateString() === new Date().toDateString();
             
@@ -143,30 +139,30 @@ const StudyCalendar = () => {
                   group hover:scale-105 min-h-[50px] flex items-center justify-center
                   ${!isCurrentMonth ? 'opacity-30' : ''}
                   ${isToday ? 'ring-2 ring-primary animate-glow' : ''}
-                  ${studyData ? 
-                    studyData.studied 
+                  ${studyDataDay ? 
+                    studyDataDay.studied 
                       ? 'bg-success/20 border border-success text-success-foreground hover:bg-success/30 animate-pulse-success' 
                       : 'bg-error/20 border border-error text-error-foreground hover:bg-error/30 animate-pulse-error'
                     : 'bg-secondary/20 hover:bg-secondary/30 border border-border'
                   }
                 `}
-                title={studyData?.subjects?.join(', ') || ''}
+                title={studyDataDay?.subjects?.join(', ') || ''}
               >
                 <span className="text-sm font-medium">{day.getDate()}</span>
-                {studyData && (
+                {studyDataDay && (
                   <div className="absolute top-1 right-1">
                     <div 
                       className={`w-2 h-2 rounded-full ${
-                        studyData.studied ? 'bg-success' : 'bg-error'
+                        studyDataDay.studied ? 'bg-success' : 'bg-error'
                       }`}
                     />
                   </div>
                 )}
-                {studyData?.subjects && studyData.subjects.length > 0 && (
+                {studyDataDay?.subjects && studyDataDay.subjects.length > 0 && (
                   <div className="absolute bottom-1 left-1 right-1">
                     <div className="text-xs opacity-70 truncate">
-                      {studyData.subjects[0]}
-                      {studyData.subjects.length > 1 && ` +${studyData.subjects.length - 1}`}
+                      {studyDataDay.subjects[0]}
+                      {studyDataDay.subjects.length > 1 && ` +${studyDataDay.subjects.length - 1}`}
                     </div>
                   </div>
                 )}
@@ -174,7 +170,6 @@ const StudyCalendar = () => {
             );
           })}
         </div>
-        
         <div className="flex justify-center gap-6 mt-6 pt-4 border-t border-border">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-success animate-pulse-success" />
@@ -185,6 +180,7 @@ const StudyCalendar = () => {
             <span className="text-sm text-error-foreground">Didn't study</span>
           </div>
         </div>
+        {loading && <div className="text-center mt-4 text-muted-foreground">Loading...</div>}
       </CardContent>
     </Card>
   );

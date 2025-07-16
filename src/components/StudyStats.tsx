@@ -1,24 +1,79 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Trophy, Target, Calendar, Flame } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 const StudyStats = () => {
-  // Sample statistics data
-  const stats = {
-    totalDays: 15,
-    studiedDays: 10,
-    consecutiveDays: 3,
+  const [stats, setStats] = useState({
+    totalDays: 0,
+    studiedDays: 0,
+    consecutiveDays: 0,
     monthGoal: 20,
-    studyStreak: 5,
-    completionRate: 67
-  };
+    studyStreak: 0,
+    completionRate: 0,
+  });
 
-  const studyPercentage = (stats.studiedDays / stats.totalDays) * 100;
-  const goalPercentage = (stats.studiedDays / stats.monthGoal) * 100;
+  useEffect(() => {
+    const fetchStats = async () => {
+      const { data, error } = await supabase.from("study_sessions").select("timestamp");
+
+      if (data) {
+        // Agrupa por dia (apenas 1 registro por dia)
+        const uniqueDates = Array.from(new Set(data.map((d: any) => new Date(d.timestamp).toDateString())));
+        const studiedDays = uniqueDates.length;
+        const totalDays = uniqueDates.length;
+
+        // Streak (sequência) de dias consecutivos
+        const sortedDates = uniqueDates
+          .map(dateStr => new Date(dateStr))
+          .sort((a, b) => a.getTime() - b.getTime());
+
+        let bestStreak = 0;
+        let currentStreak = 0;
+        let streak = 1;
+        for (let i = 1; i < sortedDates.length; i++) {
+          const diff = (sortedDates[i].getTime() - sortedDates[i - 1].getTime()) / (1000 * 60 * 60 * 24);
+          if (diff === 1) {
+            streak++;
+          } else {
+            streak = 1;
+          }
+          if (streak > bestStreak) bestStreak = streak;
+        }
+        bestStreak = Math.max(bestStreak, streak);
+
+        // Calcula streak atual (nos últimos dias até hoje)
+        streak = 1;
+        for (let i = sortedDates.length - 1; i > 0; i--) {
+          const diff = (sortedDates[i].getTime() - sortedDates[i - 1].getTime()) / (1000 * 60 * 60 * 24);
+          if (diff === 1) {
+            streak++;
+          } else {
+            break;
+          }
+        }
+        currentStreak = streak;
+
+        setStats({
+          totalDays,
+          studiedDays,
+          consecutiveDays: bestStreak,
+          monthGoal: 20,
+          studyStreak: currentStreak,
+          completionRate: totalDays ? (studiedDays / totalDays) * 100 : 0,
+        });
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const studyPercentage = stats.totalDays ? (stats.studiedDays / stats.totalDays) * 100 : 0;
+  const goalPercentage = stats.monthGoal ? (stats.studiedDays / stats.monthGoal) * 100 : 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in">
-      {/* Study Rate Card */}
       <Card className="bg-gradient-card shadow-glow border-border hover:shadow-success transition-all duration-300">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
@@ -41,8 +96,6 @@ const StudyStats = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Monthly Goal Card */}
       <Card className="bg-gradient-card shadow-glow border-border hover:shadow-glow transition-all duration-300">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
@@ -65,8 +118,6 @@ const StudyStats = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Current Streak Card */}
       <Card className="bg-gradient-card shadow-glow border-border hover:shadow-error transition-all duration-300">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
@@ -97,8 +148,6 @@ const StudyStats = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Best Streak Card */}
       <Card className="bg-gradient-card shadow-glow border-border hover:shadow-glow transition-all duration-300">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">

@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { TrendingUp, BookOpen } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 interface SubjectData {
   subject: string;
@@ -8,26 +10,58 @@ interface SubjectData {
   color: string;
 }
 
+const SUBJECT_COLORS: Record<string, string> = {
+  Mathematics: '#22c55e',
+  Physics: '#3b82f6',
+  Chemistry: '#8b5cf6',
+  History: '#f59e0b',
+  Geography: '#ef4444',
+  English: '#06b6d4',
+  Literature: '#ec4899',
+  Biology: '#10b981',
+};
+
 const SubjectChart = () => {
-  // Sample data for studied subjects
-  const subjectData: SubjectData[] = [
-    { subject: 'Mathematics', days: 8, color: '#22c55e' },
-    { subject: 'Physics', days: 6, color: '#3b82f6' },
-    { subject: 'Chemistry', days: 5, color: '#8b5cf6' },
-    { subject: 'History', days: 4, color: '#f59e0b' },
-    { subject: 'Geography', days: 3, color: '#ef4444' },
-    { subject: 'English', days: 5, color: '#06b6d4' },
-    { subject: 'Literature', days: 4, color: '#ec4899' },
-    { subject: 'Biology', days: 2, color: '#10b981' },
-  ];
+  const [subjectData, setSubjectData] = useState<SubjectData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      setLoading(true);
+      // Busca todas as sessões de estudo e conta por subject
+      const { data, error } = await supabase
+        .from("study_sessions")
+        .select("subject");
+
+      if (data) {
+        const subjectCount: Record<string, number> = {};
+        data.forEach((row: any) => {
+          if (row.subject) {
+            subjectCount[row.subject] = (subjectCount[row.subject] || 0) + 1;
+          }
+        });
+
+        setSubjectData(
+          Object.entries(subjectCount).map(([subject, days]) => ({
+            subject,
+            days,
+            color: SUBJECT_COLORS[subject] || "#8884d8",
+          }))
+        );
+      }
+      setLoading(false);
+    };
+
+    fetchSubjects();
+  }, []);
 
   const totalDays = subjectData.reduce((sum, item) => sum + item.days, 0);
-  const maxDays = Math.max(...subjectData.map(item => item.days));
+  const maxDays = Math.max(...subjectData.map(item => item.days), 0);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
-      const percentage = ((data.days / totalDays) * 100).toFixed(1);
+      const percentage = totalDays ? ((data.days / totalDays) * 100).toFixed(1) : 0;
       
       return (
         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
@@ -55,7 +89,6 @@ const SubjectChart = () => {
           Total of {totalDays} study days distributed among subjects
         </p>
       </CardHeader>
-      
       <CardContent>
         <div className="h-80 w-full mb-6">
           <ResponsiveContainer width="100%" height="100%">
@@ -93,8 +126,6 @@ const SubjectChart = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        
-        {/* Statistics cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
             <div className="flex items-center gap-2 mb-2">
@@ -103,7 +134,6 @@ const SubjectChart = () => {
             </div>
             <span className="text-2xl font-bold text-primary">{totalDays}</span>
           </div>
-          
           <div className="bg-success/10 rounded-lg p-4 border border-success/20">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="h-4 w-4 text-success" />
@@ -113,7 +143,6 @@ const SubjectChart = () => {
               {subjectData.find(s => s.days === maxDays)?.subject}
             </span>
           </div>
-          
           <div className="bg-warning/10 rounded-lg p-4 border border-warning/20">
             <div className="flex items-center gap-2 mb-2">
               <BookOpen className="h-4 w-4 text-warning" />
@@ -121,19 +150,16 @@ const SubjectChart = () => {
             </div>
             <span className="text-2xl font-bold text-warning">{subjectData.length}</span>
           </div>
-          
           <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="h-4 w-4 text-accent" />
               <span className="text-sm text-muted-foreground">Avg/Subject</span>
             </div>
             <span className="text-2xl font-bold text-accent">
-              {(totalDays / subjectData.length).toFixed(1)}
+              {subjectData.length ? (totalDays / subjectData.length).toFixed(1) : 0}
             </span>
           </div>
         </div>
-        
-        {/* Subject list with colors */}
         <div className="mt-6 pt-4 border-t border-border">
           <h4 className="text-lg font-medium mb-3 text-foreground">Subject Legend</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -149,6 +175,7 @@ const SubjectChart = () => {
             ))}
           </div>
         </div>
+        {loading && <div className="text-center mt-4 text-muted-foreground">Loading...</div>}
       </CardContent>
     </Card>
   );
