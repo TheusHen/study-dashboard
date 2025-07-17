@@ -1,8 +1,9 @@
-name: Run Discord bot daily at 18:00
+name: Run Discord bot daily at 18:00 (GMT-3)
 
 on:
   schedule:
-    - cron: '0 18 * * *'
+    # 18:00 GMT-3 == 21:00 UTC (GMT-3 is 3 hours behind UTC)
+    - cron: '0 21 * * *'
   workflow_dispatch:
 
 jobs:
