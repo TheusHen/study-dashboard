@@ -36,7 +36,11 @@ const SubjectChart = () => {
         const subjectCount: Record<string, number> = {};
         data.forEach((row: any) => {
           if (row.subject) {
-            subjectCount[row.subject] = (subjectCount[row.subject] || 0) + 1;
+            // Compatibilidade: se o banco tiver registros antigos com múltiplos assuntos em um campo
+            const subjects = row.subject.split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0);
+            subjects.forEach((subject: string) => {
+              subjectCount[subject] = (subjectCount[subject] || 0) + 1;
+            });
           }
         });
 
