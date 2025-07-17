@@ -35,14 +35,15 @@ const StudyCalendar = () => {
             daysMap[dateStr] = { date, studied: true, subjects: [] };
           }
           if (item.subject) {
-            daysMap[dateStr].subjects?.push(item.subject);
+            // Compatibilidade: suporta entradas antigas com vírgula
+            const subjectsArray = item.subject.split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0);
+            daysMap[dateStr].subjects?.push(...subjectsArray);
           }
         });
 
         setStudyData(Object.values(daysMap));
 
         // Calcula o maior streak desde CREATION_DATE
-        // Crie um Set de todos os dias estudados
         const studiedDaysSet = new Set(
           Object.values(daysMap).map(d => {
             const dt = new Date(d.date);
@@ -51,7 +52,6 @@ const StudyCalendar = () => {
           })
         );
 
-        // Comece de CREATION_DATE até ontem (ou até hoje, se preferir)
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -70,7 +70,6 @@ const StudyCalendar = () => {
           d.setDate(d.getDate() + 1);
         }
 
-        // No caso de só um dia estudado, streak = 1
         if (studiedDaysSet.size === 1) maxStreakCalc = 1;
 
         setMaxStreak(maxStreakCalc);
